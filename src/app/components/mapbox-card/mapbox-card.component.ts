@@ -50,19 +50,62 @@ export class MapboxCardComponent implements OnInit{
         // });
     
         
+          // this.map?.addLayer({
+          //   id: 'my-layer',
+          //   type: 'fill',
+          //   source: {
+          //     type: 'geojson',
+          //     data: this.data,
+          //   },
+          //   paint: {
+          //     'fill-color': 'transparent',
+          //     'fill-opacity': 0.5,
+          //   },
+          // });
+        
+
+          // this.map?.addLayer({
+          //   id: 'border-layer',
+          //   type: 'line',
+          //   source: {
+          //     type: 'geojson',
+          //     data: this.data
+          //   },
+          //   paint: {
+          //     'line-color': '#ffffff',
+          //     'line-width': 1
+          //   }
+          // });
+
           this.map?.addLayer({
-            id: 'my-layer',
+            id: 'region-layer',
             type: 'fill',
             source: {
               type: 'geojson',
-              data: this.data,
+              data: this.data
             },
             paint: {
-              'fill-color': '#0080ff',
-              'fill-opacity': 0.5,
-            },
+              'fill-color': [
+                'match',
+                ['get', 'region'],
+                'Occitanie', '#FF0000',
+                'Provence-Alpes-Côte d\'Azur', '#00FF00',
+                'Île-de-France', '#0000FF',
+                'Hauts-de-France', '#FFFF00',
+                'Nouvelle-Aquitaine', '#FF00FF',
+                'Auvergne-Rhône-Alpes', '#00FFFF',
+                'Bretagne', '#800080 ',
+                'Centre-Val de Loire', '#FFA500',
+                'Pays de la Loire', '#008000',
+                'Bourgogne-Franche-Comté', '#800000',
+                'Grand Est', '#000080',
+                'Normandie', '#008080',
+                /* Ajoutez d'autres couleurs pour chaque région */
+                '#000000' /* Couleur par défaut */
+              ],
+              "fill-opacity": 0.5
+            }
           });
-        
 
           this.map?.addLayer({
             id: 'border-layer',
@@ -73,10 +116,10 @@ export class MapboxCardComponent implements OnInit{
             },
             paint: {
               'line-color': '#ffffff',
-              'line-width': 1
+              'line-width': 0.2
             }
           });
-    })
+      });
 
     })
   }
