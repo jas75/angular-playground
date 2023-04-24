@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
 import { environment } from 'src/environments/environment.test';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-mapbox-card',
@@ -10,59 +11,72 @@ import { environment } from 'src/environments/environment.test';
 export class MapboxCardComponent implements OnInit{
 
   map?: mapboxgl.Map;
-  style = 'mapbox://styles/jas75/clgcdohmm001z01p2szlmyy6x';
+  style = 'mapbox://styles/jas75/clgoxiivu00ht01r758ksf0zc';
   accessToken = environment.mapboxAccessToken;
-  lat = 26.3398;
-  lng = -81.7787;
+  lat = 48.866667;
+  lng = 2.333333;
+  zoom = 5;
+  public data: any;
+
+  constructor(
+    private http: HttpClient
+  ) {}
 
   ngOnInit(): void {
-    console.log(this.accessToken)
-    this.map = new mapboxgl.Map({
-      accessToken:
-       this.accessToken,
-      container: 'map',
-      style: this.style,
-      zoom: 2,
-      center: [this.lng, this.lat],
-    });
-
-    this.map.on('load', () => {
-
-      // this.map?.addSource('countries', {
-      //   type: 'geojson',
-      //   data: 'https://www.data.gouv.fr/fr/datasets/r/00c0c560-3ad1-4a62-9a29-c34c98c3701e'
-      // });
-
-      this.map?.addSource('communes', {
-        type: 'geojson',
-        data: 'https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/regions/ile-de-france/communes-ile-de-france.geojson'
+    this.http.get('/assets/data/communes.geojson').subscribe(data => {
+      this.data = data;
+      console.log(this.accessToken)
+      this.map = new mapboxgl.Map({
+        accessToken:
+         this.accessToken,
+        container: 'map',
+        style: this.style,
+        zoom: this.zoom,
+        center: [this.lng, this.lat],
       });
-      
-      // this.map?.addSource('regions', {
-      //   type: 'geojson',
-      //   data: 'chemin/vers/le/fichier/regions.geojson'
-      // });
   
-      this.map?.addLayer({
-        'id': 'communes-layer',
-        'type': 'fill',
-        'source': 'communes',
-        'layout': {},
-        'paint': {
-          'fill-color': [
-            'match',
-            ['get', 'nom_comm'],
-            'Paris', 'red',
-            'Bobigny', '#0074D9',
-            'Montfermeil', '#2ECC40',
-            /* ajouter autant de communes que nécessaire */
-            /* 'nom_comm' est le nom de la propriété contenant le nom de la commune */
-            /* '#XXXXXX' est le code hexadécimal de la couleur souhaitée pour cette commune */
-            '#CCCCCC' /* couleur par défaut si le nom de la commune n'est pas trouvé */
-          ],
-          'fill-opacity': 0.8
-        }
-      });
+      this.map.on('load', () => {
+  
+        // this.map?.addSource('countries', {
+        //   type: 'geojson',
+        //   data: 'https://www.data.gouv.fr/fr/datasets/r/00c0c560-3ad1-4a62-9a29-c34c98c3701e'
+        // });
+  
+        // ts
+        
+        // this.map?.addSource('regions', {
+        //   type: 'geojson',
+        //   data: 'chemin/vers/le/fichier/regions.geojson'
+        // });
+    
+        
+          this.map?.addLayer({
+            id: 'my-layer',
+            type: 'fill',
+            source: {
+              type: 'geojson',
+              data: this.data,
+            },
+            paint: {
+              'fill-color': '#0080ff',
+              'fill-opacity': 0.5,
+            },
+          });
+        
+
+          this.map?.addLayer({
+            id: 'border-layer',
+            type: 'line',
+            source: {
+              type: 'geojson',
+              data: this.data
+            },
+            paint: {
+              'line-color': '#ffffff',
+              'line-width': 1
+            }
+          });
+    })
 
     })
   }
