@@ -29,11 +29,12 @@ export class MapboxCardComponent implements OnInit{
       this.createMap();
       this.map?.on('load', () => {
           this.addRegionsLayer();
-          const marker = new mapboxgl.Marker({
-            draggable: true
-          })
-          .setLngLat([this.lng, this.lat])
-          .addTo(this.map as mapboxgl.Map)
+          // const marker = new mapboxgl.Marker({
+          //   draggable: true
+          // })
+          // .setLngLat([this.lng, this.lat])
+          // .addTo(this.map as mapboxgl.Map)
+          this.createMarkers()
       });
 
       // TODO bon je peux jouer avec le zoom, mais il faut voir quelle comportmeent je veux
@@ -113,6 +114,29 @@ export class MapboxCardComponent implements OnInit{
   public hideLayers() {
     this.map?.setLayoutProperty('region-layer', 'visibility', 'none'); // Cacher le layer
     this.map?.setLayoutProperty('border-layer', 'visibility', 'none');
+  }
+
+  public createMarkers() {
+    for (const marker of this.units.features) {
+      // Create a DOM element for each marker.
+      const el = document.createElement('div');
+      const width = 100;
+      const height = 100;
+      el.className = 'marker';
+      el.style.backgroundImage = `url(https://placekitten.com/g/${width}/${height}/)`;
+      el.style.width = `${width}px`;
+      el.style.height = `${height}px`;
+      el.style.backgroundSize = '100%';
+       
+      el.addEventListener('click', () => {
+      window.alert(marker.properties.message);
+      });
+       
+      // Add markers to the map.
+      new mapboxgl.Marker(el)
+      .setLngLat(marker.geometry.coordinates)
+      .addTo(this.map as mapboxgl.Map);
+      }
   }
 
 
