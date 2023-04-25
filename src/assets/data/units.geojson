@@ -1,0 +1,45 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [2.3508, 48.8566]
+        },
+        "properties": {
+          "name": "Paris"
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [4.8357, 45.7640]
+        },
+        "properties": {
+          "name": "Lyon"
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [5.3698, 43.2965]
+        },
+        "properties": {
+          "name": "Marseille"
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [-1.6778, 48.1147]
+        },
+        "properties": {
+          "name": "Rennes"
+        }
+      }
+    ]
+  }

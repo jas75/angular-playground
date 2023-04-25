@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
 import { environment } from 'src/environments/environment.test';
 import { HttpClient } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-mapbox-card',
@@ -10,36 +11,41 @@ import { HttpClient } from '@angular/common/http';
 })
 export class MapboxCardComponent implements OnInit{
 
-  map?: mapboxgl.Map;
-  style = 'mapbox://styles/jas75/clgoxiivu00ht01r758ksf0zc';
-  accessToken = environment.mapboxAccessToken;
-  lat = 48.866667;
-  lng = 2.333333;
-  zoom = 5;
-  public data: any;
+  public map?: mapboxgl.Map;
+  public style = 'mapbox://styles/jas75/clgoxiivu00ht01r758ksf0zc';
+  public accessToken = environment.mapboxAccessToken;
+  public lat = 48.866667;
+  public lng = 2.333333;
+  public zoom = 5;
+  public borders: any;
+  public units: any;
 
   constructor(
     private http: HttpClient
   ) {}
 
   ngOnInit(): void {
-    this.http.get('/assets/data/communes.geojson').subscribe(data => {
-      this.data = data;
-      console.log(this.accessToken)
+    this.loadData().then(() => {
       this.createMap();
       this.map?.on('load', () => {
-          this.addRegionLayer();
+          this.addRegionsLayer();
+          const marker = new mapboxgl.Marker({
+            draggable: true
+          })
+          .setLngLat([this.lng, this.lat])
+          .addTo(this.map as mapboxgl.Map)
       });
 
-      this.map?.on('zoom', () => {
-        const zoom = this.map?.getZoom();
+      // TODO bon je peux jouer avec le zoom, mais il faut voir quelle comportmeent je veux
+      // this.map?.on('zoom', () => {
+      //   const zoom = this.map?.getZoom();
 
-        if (zoom as number > 10) {
-          this.hideLayers();
-        } else {
-          this.displayRegionLayer();
-        }
-      })
+      //   if (zoom as number > 15) {
+      //     this.hideLayers();
+      //   } else {
+      //     this.displayRegionLayer();
+      //   }
+      // })
 
     })
   }
@@ -55,13 +61,13 @@ export class MapboxCardComponent implements OnInit{
     });
   }
 
-  public addRegionLayer() {
+  public addRegionsLayer() {
     this.map?.addLayer({
       id: 'region-layer',
       type: 'fill',
       source: {
         type: 'geojson',
-        data: this.data
+        data: this.borders
       },
       paint: {
         'fill-color': [
@@ -82,7 +88,7 @@ export class MapboxCardComponent implements OnInit{
           /* Ajoutez d'autres couleurs pour chaque région */
           '#000000' /* Couleur par défaut */
         ],
-        "fill-opacity": 0.5
+        "fill-opacity": 0.3
       }
     });
 
@@ -91,7 +97,7 @@ export class MapboxCardComponent implements OnInit{
       type: 'line',
       source: {
         type: 'geojson',
-        data: this.data
+        data: this.borders
       },
       paint: {
         'line-color': '#ffffff',
@@ -99,7 +105,6 @@ export class MapboxCardComponent implements OnInit{
       }
     });
   }
-
 
   public displayRegionLayer() {
     this.map?.setLayoutProperty('region-layer', 'visibility', 'visible');
@@ -109,4 +114,32 @@ export class MapboxCardComponent implements OnInit{
     this.map?.setLayoutProperty('region-layer', 'visibility', 'none'); // Cacher le layer
     this.map?.setLayoutProperty('border-layer', 'visibility', 'none');
   }
+
+
+  // HTTP REQUESTS
+  public loadData() {
+    return Promise.all([
+      this.getBorders(),
+      this.getUnits()
+    ])
+  }
+
+  public getBorders(): Promise<any> {
+    return lastValueFrom(this.http.get('/assets/data/regions-fr.geojson'))
+    .then((res: any) => {
+      this.borders = res;
+      return Promise.resolve()
+    })
+    .catch((err: any) => Promise.reject());
+  }
+
+  public getUnits(): Promise<any> {
+    return lastValueFrom(this.http.get('/assets/data/units.geojson'))
+    .then((res: any) => {
+      this.units = res
+      return Promise.resolve()
+    })
+    .catch((err: any) => Promise.reject());
+  }
+
 }
