@@ -3,6 +3,8 @@ import * as mapboxgl from 'mapbox-gl';
 import { environment } from 'src/environments/environment.test';
 import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
+import { faPersonMilitaryRifle } from '@fortawesome/free-solid-svg-icons';
+import { icon } from '@fortawesome/fontawesome-svg-core';
 
 @Component({
   selector: 'app-mapbox-card',
@@ -20,6 +22,9 @@ export class MapboxCardComponent implements OnInit{
   public borders: any;
   public units: any;
 
+
+  // icons
+  public soldierIcon = faPersonMilitaryRifle;
   constructor(
     private http: HttpClient
   ) {}
@@ -120,20 +125,28 @@ export class MapboxCardComponent implements OnInit{
     for (const marker of this.units.features) {
       // Create a DOM element for each marker.
       const el = document.createElement('div');
-      const width = 100;
-      const height = 100;
+      const width = 50;
+      const height = 50;
       el.className = 'marker';
-      el.style.backgroundImage = `url(https://placekitten.com/g/${width}/${height}/)`;
+      el.innerHTML = icon(this.soldierIcon).html.join();
+      // el.style.backgroundImage = `url(https://placekitten.com/g/${width}/${height}/)`;
       el.style.width = `${width}px`;
       el.style.height = `${height}px`;
+      el.style.fontSize = '3em'
+      el.style.color = 'white'
       el.style.backgroundSize = '100%';
+      el.style.textAlign = 'center'
+      el.style.margin = "auto"
        
-      el.addEventListener('click', () => {
-      window.alert(marker.properties.message);
-      });
+      // el.addEventListener('click', () => {
+      // window.alert(marker.properties.message);
+      // });
        
       // Add markers to the map.
-      new mapboxgl.Marker(el)
+      new mapboxgl.Marker({
+        element: el,
+        draggable: true
+      })
       .setLngLat(marker.geometry.coordinates)
       .addTo(this.map as mapboxgl.Map);
       }

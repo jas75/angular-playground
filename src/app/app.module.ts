@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { LeafletCardComponent } from './components/leaflet-card/leaflet-card.component';
 import { MapboxCardComponent } from './components/mapbox-card/mapbox-card.component';
 import { HttpClientModule } from '@angular/common/http';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,9 @@ import { HttpClientModule } from '@angular/common/http';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    FontAwesomeModule,
+    FontAwesomeModule
   ],
   providers: [],
   bootstrap: [AppComponent]
