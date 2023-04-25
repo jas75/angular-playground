@@ -34,12 +34,9 @@ export class MapboxCardComponent implements OnInit{
       this.createMap();
       this.map?.on('load', () => {
           this.addRegionsLayer();
-          // const marker = new mapboxgl.Marker({
-          //   draggable: true
-          // })
-          // .setLngLat([this.lng, this.lat])
-          // .addTo(this.map as mapboxgl.Map)
-          this.createMarkers()
+          this.createMarkers();
+
+          
       });
 
       // TODO bon je peux jouer avec le zoom, mais il faut voir quelle comportmeent je veux
